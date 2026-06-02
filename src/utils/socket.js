@@ -3,11 +3,19 @@ import { io } from 'socket.io-client';
 
 let socket = null;
 
+// Получаем URL сервера из переменной окружения
+const getServerUrl = () => {
+  return import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
+};
+
 // Подключение к серверу
-export const connectSocket = (serverUrl = 'http://localhost:3000') => {
+export const connectSocket = (serverUrl = null) => {
   if (socket?.connected) return socket;
 
-  socket = io(serverUrl, {
+  const url = serverUrl || getServerUrl();
+  console.log('Подключение к:', url);
+
+  socket = io(url, {
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
@@ -32,7 +40,7 @@ export const connectSocket = (serverUrl = 'http://localhost:3000') => {
 // Получение сокета
 export const getSocket = () => {
   if (!socket) {
-    connectSocket();
+    connectSocket(getServerUrl());
   }
   return socket;
 };
