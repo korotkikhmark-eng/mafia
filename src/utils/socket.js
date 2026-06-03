@@ -5,25 +5,32 @@ let socket = null;
 
 // Получаем URL сервера из переменной окружения
 const getServerUrl = () => {
-  return import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
+  const url = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
+  console.log('📍 VITE_SERVER_URL из .env:', import.meta.env.VITE_SERVER_URL);
+  console.log('📍 Финальный URL для подключения:', url);
+  return url;
 };
 
 // Подключение к серверу
 export const connectSocket = (serverUrl = null) => {
-  if (socket?.connected) return socket;
+  if (socket?.connected) {
+    console.log('Socket уже подключен, используем существующий');
+    return socket;
+  }
 
   const url = serverUrl || getServerUrl();
-  console.log('Подключение к:', url);
+  console.log('🔌 Инициализируем Socket.IO с URL:', url);
 
   socket = io(url, {
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
     reconnectionAttempts: 5,
+    transports: ['websocket', 'polling'], // Явно указываем транспорты
   });
 
   socket.on('connect', () => {
-    console.log('✅ Подключено к серверу');
+    console.log('✅ Подключено к серверу на', url);
   });
 
   socket.on('disconnect', () => {
@@ -40,6 +47,7 @@ export const connectSocket = (serverUrl = null) => {
 // Получение сокета
 export const getSocket = () => {
   if (!socket) {
+    console.log('Socket не инициализирован, создаём подключение...');
     connectSocket(getServerUrl());
   }
   return socket;

@@ -72,16 +72,48 @@ export const useGame = () => {
         setPlayers(results.players);
       }
       if (results.killed) {
-        addSystemMessage(`${results.killed} был убит мафией!`);
+        const roleEmoji = {
+          'mafia': '🎭',
+          'sheriff': '👮',
+          'doctor': '👨‍⚕️',
+          'villager': '👤'
+        };
+        const roleText = {
+          'mafia': 'МАФИЯ',
+          'sheriff': 'ШЕРИФ',
+          'doctor': 'ДОКТОР',
+          'villager': 'МИРНЫЙ ЖИТЕЛЬ'
+        };
+        const emoji = roleEmoji[results.killedRole] || '👤';
+        const text = roleText[results.killedRole] || 'НЕИЗВЕСТНО';
+        addSystemMessage(`💀 ${results.killed} был убит мафией! Роль: ${emoji} ${text}`);
       }
       if (results.healed) {
-        addSystemMessage(`${results.healed} был спасен доктором!`);
+        addSystemMessage(`💚 ${results.healed} был спасен доктором!`);
       }
     });
 
-    const unsubscribe7 = on('votingEnded', ({ eliminatedPlayer }) => {
+    const unsubscribe7 = on('votingEnded', ({ eliminatedPlayer, role, players }) => {
       if (eliminatedPlayer) {
-        addSystemMessage(`${eliminatedPlayer.name} исключен голосованием!`);
+        const roleEmoji = {
+          'mafia': '🎭',
+          'sheriff': '👮',
+          'doctor': '👨‍⚕️',
+          'villager': '👤'
+        };
+        const roleText = {
+          'mafia': 'МАФИЯ',
+          'sheriff': 'ШЕРИФ',
+          'doctor': 'ДОКТОР',
+          'villager': 'МИРНЫЙ ЖИТЕЛЬ'
+        };
+        const emoji = roleEmoji[role] || '👤';
+        const text = roleText[role] || 'НЕИЗВЕСТНО';
+        addSystemMessage(`🗳️ ${eliminatedPlayer} исключен голосованием! Роль: ${emoji} ${text}`);
+        // Обновляем список игроков
+        if (players) {
+          setPlayers(players);
+        }
       }
     });
 
