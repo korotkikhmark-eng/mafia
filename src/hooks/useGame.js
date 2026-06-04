@@ -94,26 +94,10 @@ export const useGame = () => {
     });
 
     const unsubscribe7 = on('votingEnded', ({ eliminatedPlayer, role, players }) => {
-      if (eliminatedPlayer) {
-        const roleEmoji = {
-          'mafia': '🎭',
-          'sheriff': '👮',
-          'doctor': '👨‍⚕️',
-          'villager': '👤'
-        };
-        const roleText = {
-          'mafia': 'МАФИЯ',
-          'sheriff': 'ШЕРИФ',
-          'doctor': 'ДОКТОР',
-          'villager': 'МИРНЫЙ ЖИТЕЛЬ'
-        };
-        const emoji = roleEmoji[role] || '👤';
-        const text = roleText[role] || 'НЕИЗВЕСТНО';
-        addSystemMessage(`🗳️ ${eliminatedPlayer} исключен голосованием! Роль: ${emoji} ${text}`);
-        // Обновляем список игроков
-        if (players) {
-          setPlayers(players);
-        }
+      // Обновляем список игроков - этого достаточно
+      // Сообщение уже отправляется сервером через newMessage событие
+      if (players) {
+        setPlayers(players);
       }
     });
 

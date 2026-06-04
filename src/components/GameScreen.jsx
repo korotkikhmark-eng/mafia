@@ -58,12 +58,12 @@ export const GameScreen = ({
   const phaseInfo = getPhaseInfo();
 
   // Активные роли, которые действуют ночью
-  const activeRoleForNight = ['mafia', 'sheriff', 'doctor'].includes(currentRole);
+  const activeRoleForNight = ['mafia', 'sheriff', 'doctor'].includes(currentRole) && !currentPlayer?.isDead;
 
-  // Определяем активна ли роль (для ночи - только активные роли, для голосования - все живые)
+  // Определяем активна ли роль (для ночи - только активные живые роли, для голосования - все живые)
   const isRoleActive = currentPhase === 'voting' 
     ? !currentPlayer?.isDead // Во время голосования все живые могут голосовать
-    : activeRoleForNight; // Ночью только активные роли
+    : activeRoleForNight; // Ночью только живые с активными ролями
 
   // Доступные цели для действия (живые игроки кроме себя)
   const availableTargets = players.filter((p) => !p.isDead && p.id !== playerId);
@@ -121,8 +121,8 @@ export const GameScreen = ({
         </div>
       </div>
 
-      {/* Ночные действия (если активная роль) */}
-      {currentPhase === 'night' && activeRoleForNight && (
+      {/* Ночные действия (если активная роль и игрок живой) */}
+      {currentPhase === 'night' && activeRoleForNight && !currentPlayer?.isDead && (
         <div className="bg-indigo-900/50 border-2 border-indigo-500 rounded-lg p-4 mb-4">
           <h3 className="font-bold text-lg mb-3">🌙 {ru.phases.nightAction}</h3>
           <p className="text-sm text-indigo-200 mb-3">⏳ Ожидание действий других участников...</p>
